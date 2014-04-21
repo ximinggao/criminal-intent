@@ -1,6 +1,6 @@
 package com.bignerdranch.android.criminalintent;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 public class CrimeListFragment extends ListFragment {
 	private static final String TAG = CrimeListFragment.class.getSimpleName();
-	private ArrayList<Crime> mCrimes;
+	private List<Crime> mCrimes;
 	private boolean mSubtitleVisible;
 
 	@Override
@@ -111,7 +111,7 @@ public class CrimeListFragment extends ListFragment {
 	
 	private class CrimeAdapter extends ArrayAdapter<Crime> {
 
-		public CrimeAdapter(ArrayList<Crime> crimes) {
+		public CrimeAdapter(List<Crime> crimes) {
 			super(getActivity(), 0, crimes	);
 		}
 

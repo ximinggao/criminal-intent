@@ -1,6 +1,6 @@
 package com.bignerdranch.android.criminalintent;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 public class CrimePagerActivity extends FragmentActivity {
 
 	private ViewPager mViewPager;
-	private ArrayList<Crime> mCrimes;
+	private List<Crime> mCrimes;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +67,7 @@ public class CrimePagerActivity extends FragmentActivity {
 		for (int i = 0; i < mCrimes.size(); i++) {
 			if (mCrimes.get(i).getId().equals(crimeId)) {
 				mViewPager.setCurrentItem(i);
+				setTitle(mCrimes.get(i).getTitle());
 				break;
 			}
 		}
