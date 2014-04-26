@@ -13,10 +13,15 @@ import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.view.ActionMode;
+import android.view.ActionMode.Callback;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -78,6 +83,50 @@ public class CrimeFragment extends Fragment {
 				getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 			}
 		}
+		
+		rootView.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				getActivity().startActionMode(new Callback() {
+					
+					@Override
+					public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+					
+					@Override
+					public void onDestroyActionMode(ActionMode mode) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+						MenuInflater inflater = mode.getMenuInflater();
+						inflater.inflate(R.menu.crime_list_item_context, menu);
+						return true;
+					}
+					
+					@Override
+					public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+						switch (item.getItemId()) {
+						case R.id.menu_item_delete_crime:
+							CrimeLab.get(getActivity()).deleteCrime(mCrime);
+							mode.finish();
+							if (NavUtils.getParentActivityIntent(getActivity()) != null) {
+								NavUtils.navigateUpFromSameTask(getActivity());
+							}
+							return true;
+						default:
+							return false;
+						}
+					}
+				});
+				return true;
+			}
+		});
 		
 		mTitleField = (EditText) rootView.findViewById(R.id.crime_title);
 		mTitleField.setText(mCrime.getTitle());
