@@ -217,6 +217,53 @@ public class CrimeFragment extends Fragment {
 				ImageFragment.newInstance(path).show(fm, DIALOG_IMAGE);
 			}
 		});
+		mPhotoView.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				getActivity().startActionMode(new Callback() {
+					
+					@Override
+					public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+					
+					@Override
+					public void onDestroyActionMode(ActionMode mode) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+						mode.getMenuInflater().inflate(R.menu.crime_image_context, menu);
+						if (mCrime.getPhoto() == null) {
+							MenuItem item = menu.findItem(R.id.menu_item_delete_image);
+							item.setEnabled(false);
+						}
+						return true;
+					}
+					
+					@Override
+					public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+						switch (item.getItemId()) {
+						case R.id.menu_item_delete_image:
+							PictureUtils.cleanImageView(mPhotoView);
+
+							Photo p = mCrime.getPhoto();
+							getActivity().deleteFile(p.getFilename());
+							mCrime.setPhoto(null);
+							
+							return true;
+						default:
+							return false;
+						}
+					}
+				});
+				return true;
+			}
+		});
 		
 		return rootView;
 	}
@@ -244,6 +291,11 @@ public class CrimeFragment extends Fragment {
 		} else if (requestCode == REQUEST_PHOTO) {
 			String filename = data.getStringExtra(CrimeCameraFragement.EXTRA_PHOTO_FILENAME);
 			if (filename != null) {
+				if (mCrime.getPhoto() != null) {
+					String path = mCrime.getPhoto().getFilename();
+					getActivity().deleteFile(path);
+				}
+				
 				Photo p = new Photo(filename);
 				mCrime.setPhoto(p);
 				showPhoto();
