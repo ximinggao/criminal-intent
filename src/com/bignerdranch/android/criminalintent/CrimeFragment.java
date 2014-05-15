@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,6 +42,7 @@ public class CrimeFragment extends Fragment {
 	protected static final int REQUEST_DATE = 0;
 	protected static final int REQUEST_PHOTO = 1;
 	private static final String TAG = "CrimeFragment";
+	protected static final String DIALOG_IMAGE = "image";
 	private Crime mCrime;
 	private EditText mTitleField;
 	private Button mDateButton;
@@ -201,6 +203,20 @@ public class CrimeFragment extends Fragment {
 		}
 		
 		mPhotoView = (ImageView)rootView.findViewById(R.id.crime_imageView);
+		mPhotoView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Photo p = mCrime.getPhoto();
+				if (p == null) {
+					return;
+				}
+				
+				FragmentManager fm = getActivity().getSupportFragmentManager();
+				String path = getActivity().getFileStreamPath(p.getFilename()).getAbsolutePath();
+				ImageFragment.newInstance(path).show(fm, DIALOG_IMAGE);
+			}
+		});
 		
 		return rootView;
 	}
