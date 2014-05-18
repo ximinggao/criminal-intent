@@ -3,6 +3,7 @@ package com.bignerdranch.android.criminalintent;
 import java.util.List;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +29,23 @@ public class CrimeListFragment extends ListFragment {
 	private static final String TAG = CrimeListFragment.class.getSimpleName();
 	private List<Crime> mCrimes;
 	private boolean mSubtitleVisible;
+	private Callbacks mCallbacks;
+	
+	public interface Callbacks {
+		void onCrimeSelected(Crime crime);
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mCallbacks = (Callbacks)activity;
+	}
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		mCallbacks = null;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -115,6 +133,10 @@ public class CrimeListFragment extends ListFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+		updateUI();
+	}
+
+	public void updateUI() {
 		((CrimeAdapter)getListAdapter()).notifyDataSetChanged();
 	}
 
@@ -123,9 +145,7 @@ public class CrimeListFragment extends ListFragment {
 		Crime c = ((CrimeAdapter)getListAdapter()).getItem(position);
 		Log.d(TAG, c.getTitle() + " was clicked.");
 		
-		Intent i = new Intent(getActivity(), CrimePagerActivity.class);
-		i.putExtra(CrimeFragment.EXTRA_CRIME_ID, c.getId());
-		startActivity(i);
+		mCallbacks.onCrimeSelected(c);
 	}
 	
 	@Override
@@ -146,9 +166,8 @@ public class CrimeListFragment extends ListFragment {
 		case R.id.menu_item_new_crime:
 			Crime c = new Crime();
 			CrimeLab.get(getActivity()).addCrime(c);
-			Intent i = new Intent(getActivity(), CrimePagerActivity.class);
-			i.putExtra(CrimeFragment.EXTRA_CRIME_ID, c.getId());
-			startActivityForResult(i, 0);
+			updateUI();
+			mCallbacks.onCrimeSelected(c);
 			return true;
 			
 		case R.id.menu_item_show_subtitle:
